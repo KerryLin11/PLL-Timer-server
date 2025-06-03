@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS PLL Timer</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Script for Twisty Player visualization -->
+    <script src="https://cdn.cubing.net/v0/js/cubing/twisty" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div id="timer">0:00.000</div>
+            <div id="instructions">Press and hold SPACEBAR to prepare, release to start.</div>
+
+            <!-- SCRAMBLE AND VISUALIZATION SECTION START -->
+            <div id="scramble-and-visualization-area" style="margin-top: 20px; text-align: center;">
+                <div id="scramble-text-display"
+                    style="font-size: 2em; font-weight: 500; margin-bottom: 15px; padding: 0 10px; word-wrap: break-word; min-height: 1.2em; /* Prevents layout shift */">
+                    Generating scramble...
+                </div>
+                <twisty-player id="cube-viewer"
+                    style="width: 250px; height: 250px; text-align: center;"></twisty-player>
+            </div>
+            <!-- SCRAMBLE AND VISUALIZATION SECTION END -->
+
+            <!-- CHARTS SECTION START -->
+            <div id="charts-area" style="margin-top: 20px;">
+
+                <div class="chart-container">
+                    <h3>Session Times Distribution</h3>
+                    <canvas id="sessionTimesChart"></canvas>
+                </div>
+                <div class="chart-container" style="margin-bottom: 20px;">
+                    <h3>Rolling Averages (ao5, ao12)</h3>
+                    <canvas id="rollingAveragesChart"></canvas>
+                </div>
+
+            </div>
+            <!-- CHARTS SECTION END -->
+
+        </div>
+        <div class="sidebar">
+            <div class="session-controls">
+                <select id="session-dropdown">
+                    <!-- Session options will be generated here -->
+                </select>
+                <button id="add-session">+</button>
+                <button id="settings-button">⚙️</button> <!-- Settings Button -->
+            </div>
+            <h2>Recorded Times (<span id="current-session-name">Session 1</span>)</h2>
+            <ul id="times-list">
+                <!-- Times for the current session will be listed here -->
+            </ul>
+            <div class="statistics-section">
+                <h3>Session Statistics</h3>
+                <p>Average: <span id="session-average">N/A</span></p>
+                <p>Lowest: <span id="session-lowest">N/A</span></p>
+            </div>
+            <div class="time-controls">
+                <button id="delete-times">Delete Times</button>
+                <button id="rename-session">Rename Session</button>
+                <button id="delete-session">Delete Session</button>
+                <button id="export-session">Export Session</button>
+                <button id="open-spreadsheet">Open Spreadsheet</button> <!-- New button -->
+            </div>
+            <div id="settings-panel" class="settings-panel"> <!-- Settings Panel -->
+                <h3>Settings</h3>
+                <div class="setting-item">
+                    <label for="enable-inspection">Enable 15s Inspection:</label>
+                    <input type="checkbox" id="enable-inspection">
+                </div>
+                <div class="setting-item">
+                    <label for="toggle-charts">Show Charts:</label>
+                    <input type="checkbox" id="toggle-charts" checked>
+                </div>
+            </div>
+        </div>
+        <div id="algorithms-section">
+            <h3>PLL Practice</h3>
+            <div class="algorithm-grid">
+                <!-- PLL Algorithm Images -->
+                <div class="algorithm-item" data-alg-name="PLL Aa">
+                    <div class="algorithm-caption">PLL Aa</div>
+                    <img src="images/pll/Aa.svg" alt="PLL Aa">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Aa">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Ab">
+                    <div class="algorithm-caption">PLL Ab</div>
+                    <img src="images/pll/Ab.svg" alt="PLL Ab">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Ab">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL E">
+                    <div class="algorithm-caption">PLL E</div>
+                    <img src="images/pll/E.svg" alt="PLL E">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL E">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL F">
+                    <div class="algorithm-caption">PLL F</div>
+                    <img src="images/pll/F.svg" alt="PLL F">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL F">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Ga">
+                    <div class="algorithm-caption">PLL Ga</div>
+                    <img src="images/pll/Ga.svg" alt="PLL Ga">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Ga">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Gb">
+                    <div class="algorithm-caption">PLL Gb</div>
+                    <img src="images/pll/Gb.svg" alt="PLL Gb">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Gb">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Gc">
+                    <div class="algorithm-caption">PLL Gc</div>
+                    <img src="images/pll/Gc.svg" alt="PLL Gc">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Gc">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Gd">
+                    <div class="algorithm-caption">PLL Gd</div>
+                    <img src="images/pll/Gd.svg" alt="PLL Gd">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Gd">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL H">
+                    <div class="algorithm-caption">PLL H</div>
+                    <img src="images/pll/H.svg" alt="PLL H">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL H">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Ja">
+                    <div class="algorithm-caption">PLL Ja</div>
+                    <img src="images/pll/Ja.svg" alt="PLL Ja">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Ja">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Jb">
+                    <div class="algorithm-caption">PLL Jb</div>
+                    <img src="images/pll/Jb.svg" alt="PLL Jb">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Jb">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Na">
+                    <div class="algorithm-caption">PLL Na</div>
+                    <img src="images/pll/Na.svg" alt="PLL Na">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Na">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Nb">
+                    <div class="algorithm-caption">PLL Nb</div>
+                    <img src="images/pll/Nb.svg" alt="PLL Nb">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Nb">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Ra">
+                    <div class="algorithm-caption">PLL Ra</div>
+                    <img src="images/pll/Ra.svg" alt="PLL Ra">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Ra">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Rb">
+                    <div class="algorithm-caption">PLL Rb</div>
+                    <img src="images/pll/Rb.svg" alt="PLL Rb">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Rb">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL T">
+                    <div class="algorithm-caption">PLL T</div>
+                    <img src="images/pll/T.svg" alt="PLL T">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL T">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Ua">
+                    <div class="algorithm-caption">PLL Ua</div>
+                    <img src="images/pll/Ua.svg" alt="PLL Ua">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Ua">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Ub">
+                    <div class="algorithm-caption">PLL Ub</div>
+                    <img src="images/pll/Ub.svg" alt="PLL Ub">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Ub">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL V">
+                    <div class="algorithm-caption">PLL V</div>
+                    <img src="images/pll/V.svg" alt="PLL V">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL V">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Y">
+                    <div class="algorithm-caption">PLL Y</div>
+                    <img src="images/pll/Y.svg" alt="PLL Y">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Y">N/A</div>
+                </div>
+                <div class="algorithm-item" data-alg-name="PLL Z">
+                    <div class="algorithm-caption">PLL Z</div>
+                    <img src="images/pll/Z.svg" alt="PLL Z">
+                    <div class="alg-lowest-time-display" data-alg-name-ref="PLL Z">N/A</div>
+                </div>
+                <!-- Add more PLLs as needed -->
+            </div>
+        </div>
+        <script src="script.js"></script>
+        <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+        <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+    </div>
+
+    <!-- Module script for scramble generation and display -->
+    <script type="module">
+        import { randomScrambleForEvent } from "https://cdn.cubing.net/v0/js/cubing/scramble";
+
+        // Function to generate and display a new scramble
+        async function displayNewScramble() {
+            const scrambleTextElement = document.getElementById("scramble-text-display");
+            const twistyPlayerElement = document.getElementById("cube-viewer");
+
+            if (!scrambleTextElement || !twistyPlayerElement) {
+                console.error("Scramble display elements not found in the DOM!");
+                if (scrambleTextElement) scrambleTextElement.textContent = "Error: Display elements missing.";
+                return;
+            }
+
+            try {
+                // Generate a random scramble for a 3x3x3 cube
+                const scramble = await randomScrambleForEvent("333");
+                const scrambleString = scramble.toString();
+
+                // Display the scramble text
+                scrambleTextElement.textContent = scrambleString;
+
+                // Set the scramble for the twisty-player
+                twistyPlayerElement.alg = scrambleString;
+                // You can set other twisty-player properties here if needed:
+                // twistyPlayerElement.puzzle = "3x3x3"; // Often inferred
+                // twistyPlayerElement.visualization = "2D"; // For a net-style view
+                // twistyPlayerElement.controlPanel = "none"; // To hide playback controls
+            } catch (error) {
+                console.error("Failed to generate or display scramble:", error);
+                scrambleTextElement.textContent = "Error generating scramble.";
+            }
+        }
+
+        // When the DOM is fully loaded, generate and display the initial scramble
+        document.addEventListener('DOMContentLoaded', displayNewScramble);
+
+        // Listen for timer stopped events to generate new scrambles
+        document.addEventListener('timerStopped', displayNewScramble);
+    </script>
+</body>
+
+</html>
