@@ -1214,7 +1214,7 @@ function initialize() {
     });
 
     exportSessionBtn.addEventListener('click', () => {
-        if (gapiInited && gisInited && tokenClient.hasGrantedScopes(SCOPES)) {
+        if (gapiInited && gisInited && gapi.client.getToken() !== null) {
             exportAllBestTimesToSheet();
         } else {
             handleAuthClick();
