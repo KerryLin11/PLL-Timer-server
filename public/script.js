@@ -24,11 +24,13 @@ let rollingAveragesChart = null;
 let sessionTimesChart = null;
 
 // --- Google Sheets API Config ---
+// Localhost id
 // const CLIENT_ID = '311111663580-oh6f55olsb3ccinsrau4c3mng8klajho.apps.googleusercontent.com';
-// const SPREADSHEET_ID = '10cbvAUSqstFwuHULMKxzXdD9ZV1wfDVs2H-s3hmacXk';
 
+// Render server clientid
 const CLIENT_ID = '311111663580-rg6s2gaavghtfl0troistn6637n0l2sh.apps.googleusercontent.com';
-const SPREADSHEET_ID = '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';
+const SPREADSHEET_ID = '10cbvAUSqstFwuHULMKxzXdD9ZV1wfDVs2H-s3hmacXk';
+
 
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 const SPREADSHEET_LINK = 'https://docs.google.com/spreadsheets/d/10cbvAUSqstFwuHULMKxzXdD9ZV1wfDVs2H-s3hmacXk/edit?gid=499354953';
